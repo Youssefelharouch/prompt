@@ -1,3 +1,4 @@
+import Feed from "@components/Feed";
 import React from "react";
 
 function page() {
@@ -16,6 +17,8 @@ function page() {
         accusantium, animi deleniti ratione. Voluptate aspernatur suscipit
         eveniet quas cupiditate?
       </p>
+      {/* Feed */}
+      <Feed />
     </section>
   );
 }
