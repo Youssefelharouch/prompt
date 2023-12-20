@@ -1,4 +1,5 @@
 "use client";
+import "./nav.css";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -6,18 +7,18 @@ import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 function Nav() {
-  const isUserLoggedIn = true;
-
+  const { useSession:session } = useSession();
   const [providers, setProviders] = useState(null);
-  const [toggleMenu, setToggleMenu] = useState(false)
-
+  const [toggleMenu, setToggleMenu] = useState(false);
   useEffect(() => {
-    const getProviders = async () => {
+    const getProvider = async () => {
       const response = await getProviders();
       setProviders(response);
     };
-    getProviders();
+    getProvider();
   }, []);
+
+  console.log(session);
 
   return (
     <nav className="flex-between w-full mb-16 pt-3">
@@ -33,7 +34,7 @@ function Nav() {
 
       {/* Desktop Navigation */}
       <div className="sm:flex hidden">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex gap-3 md:gap-5">
             <Link href="/create-prompt" className="black_btn">
               Create Post
@@ -55,7 +56,16 @@ function Nav() {
           <>
             {providers &&
               Object.values(providers).map((provider) => (
-                <button onClick={() => signIn(provider.id)} key={provider.name}>
+                <button
+                  className="google_btn"
+                  onClick={() => signIn(provider.id)}
+                  key={provider.name}
+                >
+                    <img
+                    src="/assets/icons/google.svg"
+                    alt="Google"
+                    className="w-5 h-5"
+                  />
                   Sign in with {provider.name}
                 </button>
               ))}
@@ -65,7 +75,7 @@ function Nav() {
 
       {/* Mobile Navigation */}
       <div className="sm:hidden flex relative">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex">
             <Image
               src="/assets/images/logo.svg"
@@ -73,38 +83,37 @@ function Nav() {
               height="30"
               className="object-contain"
               alt="profile"
-              onClick={()=>{
-                setToggleMenu((prev)=>!prev);
+              onClick={() => {
+                setToggleMenu((prev) => !prev);
               }}
             />
             {toggleMenu && (
               <div className="dropdown">
                 <Link
-                 href="/profile"
-                className="dropdown_link"
-                onClick={()=>(setToggleMenu(false))}
-                  >
+                  href="/profile"
+                  className="dropdown_link"
+                  onClick={() => setToggleMenu(false)}
+                >
                   My Profile
                 </Link>
 
                 <Link
-                 href="/create-prompt"
-                className="dropdown_link"
-                onClick={()=>(setToggleMenu(false))}
-                  >
+                  href="/create-prompt"
+                  className="dropdown_link"
+                  onClick={() => setToggleMenu(false)}
+                >
                   Create Prompt
                 </Link>
                 <button
-                type="button"
-                onClick={()=>{
-                  setToggleMenu(false);
-                  signOut();
-                }}
-                className="mt-5 w-full black_btn"
+                  type="button"
+                  onClick={() => {
+                    setToggleMenu(false);
+                    signOut();
+                  }}
+                  className="mt-5 w-full black_btn"
                 >
                   Sign Out
                 </button>
-            
               </div>
             )}
           </div>
@@ -112,8 +121,17 @@ function Nav() {
           <>
             {providers &&
               Object.values(providers).map((provider) => (
-                <button onClick={() => signIn(provider.id)} key={provider.name}>
-                  Sign in with {provider.name}
+                <button
+                  onClick={() => signIn(provider.id)}
+                  key={provider.name}
+                  className="google_btn"
+                >
+                  <img
+                    src="/assets/icons/google.svg"
+                    alt="Google"
+                    className="w-5 h-5"
+                  />
+                  Sign in  
                 </button>
               ))}
           </>
